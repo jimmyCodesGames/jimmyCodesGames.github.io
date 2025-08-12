@@ -49,19 +49,27 @@ public class FractionCalculator extends Frame implements ActionListener {
         resultLabel = new Label("", Label.CENTER);
         
         f1NumBtn = new Button(""+f1.getNumerator());
-        f1NumBtn.addActionListener(_ -> selectItemToEdit(1));
+        f1NumBtn.addActionListener(e -> selectItemToEdit(1));
         f1DenBtn = new Button(""+f1.getDenominator());
-        f1DenBtn.addActionListener(_ -> selectItemToEdit(2));
+        f1DenBtn.addActionListener(e -> selectItemToEdit(2));
 
         f2NumBtn = new Button(""+f2.getNumerator());
-        f2NumBtn.addActionListener(_ -> selectItemToEdit(3));
+        f2NumBtn.addActionListener(e -> selectItemToEdit(3));
         f2DenBtn = new Button(""+f2.getDenominator());
-        f2DenBtn.addActionListener(_ -> selectItemToEdit(4));
+        f2DenBtn.addActionListener(e -> selectItemToEdit(4));
 
-        addBtn.addActionListener(_ -> setOps("+"));
-        subBtn.addActionListener(_ -> setOps("-"));
-        mulBtn.addActionListener(_ -> setOps("×"));
-        divBtn.addActionListener(_ -> setOps("÷"));
+        addBtn.addActionListener(e -> setOps("+"));
+        addBtn.setBackground(numPadBGColor);
+        addBtn.setForeground(numPadTextColor);
+        subBtn.addActionListener(e -> setOps("-"));
+        subBtn.setBackground(numPadBGColor);
+        subBtn.setForeground(numPadTextColor);
+        mulBtn.addActionListener(e -> setOps("×"));
+        mulBtn.setBackground(numPadBGColor);
+        mulBtn.setForeground(numPadTextColor);
+        divBtn.addActionListener(e -> setOps("÷"));
+        divBtn.setBackground(numPadBGColor);
+        divBtn.setForeground(numPadTextColor);
 
         clearBtn.setBackground(numPadBGColor);
         clearBtn.setForeground(numPadTextColor);
@@ -69,16 +77,14 @@ public class FractionCalculator extends Frame implements ActionListener {
         enterBtn.setForeground(numPadTextColor);
 
         // Allow blank buttons to clear highlighted buttons
-        clearBtn.addActionListener(_ -> clearAllValues());
-        enterBtn.addActionListener(_ -> calculateResult());
+        clearBtn.addActionListener(e -> clearAllValues());
+        enterBtn.addActionListener(e -> calculateResult());
 
         zeroBtn.setBackground(numPadBGColor);
         zeroBtn.setForeground(numPadTextColor);
 
         // Calls actionPerformed() with button text as argument when button pressed 
         zeroBtn.addActionListener(this);
-
-        
 
         setTitle("Fraction Calculator");
         setSize(WIDTH, HEIGHT);
