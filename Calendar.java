@@ -116,7 +116,7 @@ public class Calendar extends Frame {
     }
  
     // Increases date.month by one, adjusts day and year if necessary, and updates display
-    public void addMonth() {
+    private void addMonth() {
 
         date.setMonth(getMonthInt()+1);
 
@@ -130,20 +130,20 @@ public class Calendar extends Frame {
     }
 
     // Increases date.date by 1, changes to next month if necessary, and updates display
-    public void addDay() {
+    private void addDay() {
         date.goToNextDay();
         updateDisplay();
     }
 
     // Increases date.year by 1 and adjusts day if necessary given new year and update display
-    public void addYear() {
+    private void addYear() {
         date.setYear(getYearInt() + 1);
         date.setDay(getDayInt());  
         updateDisplay();
     }
 
     // Decreases date.month by one, adjusts day and year if necessary, and updates display
-    public void prevMonth() {
+    private void prevMonth() {
 
         if (getMonthInt() == 1) {
             date.setMonth(12);
@@ -159,7 +159,7 @@ public class Calendar extends Frame {
     }
 
     // Decreases date.date by 1, changes to previous month if necessary, and updates display
-    public void prevDay() {
+    private void prevDay() {
         if (getDayInt() == 1) {
             prevMonth();
             setMaxDay();
@@ -171,7 +171,7 @@ public class Calendar extends Frame {
     }
 
     // Decreases date.year by 1 and adjusts day if necessary given new year and update display
-    public void prevYear() {
+    private void prevYear() {
         date.setYear(getYearInt() - 1);
         date.setDay(getDayInt());  
         updateDisplay();
