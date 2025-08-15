@@ -123,7 +123,7 @@ public class Calendar extends Frame {
         date.setDay(getDayInt());
 
         if (getMonthInt() == 12) {
-            date.setYear(getYearInt() + 1);
+            addYear();
         }
  
         updateDisplay();
@@ -138,7 +138,7 @@ public class Calendar extends Frame {
     // Increases date.year by 1 and adjusts day if necessary given new year and update display
     public void addYear() {
         date.setYear(getYearInt() + 1);
-        verifyDay();
+        date.setDay(getDayInt());  
         updateDisplay();
     }
 
@@ -153,11 +153,7 @@ public class Calendar extends Frame {
             date.setMonth(getMonthInt()-1);
         }
 
-        if (getMonthInt() > 1){
-            if (MyDate.getMaxDays(getYearInt(), getMonthInt()-1) < getDayInt()) {
-                date.setDay(1);
-            }
-        }    
+        date.setDay(getDayInt());  
 
         updateDisplay();
     }
@@ -177,15 +173,8 @@ public class Calendar extends Frame {
     // Decreases date.year by 1 and adjusts day if necessary given new year and update display
     public void prevYear() {
         date.setYear(getYearInt() - 1);
-        verifyDay();
+        date.setDay(getDayInt());  
         updateDisplay();
-    }
-
-    // If current day > max days in given month, set current day to max number of days
-    private void verifyDay() {
-        if (MyDate.getMaxDays(getYearInt(), getMonthInt()) < getDayInt()) {
-                setMaxDay();
-            }
     }
 
     // Sets date.day to maximum # of days in current month given current year
