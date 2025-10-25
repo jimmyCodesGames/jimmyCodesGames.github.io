@@ -12,7 +12,7 @@
 #define BOARDSIZE 9 // Formatting compatible for up to 99 x 99 board. Ideal board: 9 x 9
 #define NUMBOMBS (BOARDSIZE * BOARDSIZE / 8) // Spawns bombs proportional to BOARDSIZE. Ideal for 9 x 9 (10 bombs)
 #define ALLTILESREVEALED (BOARDSIZE * BOARDSIZE - NUMBOMBS) // Constant to keep track of number of tiles not containing a bomb
-#define MAXINPUT 255 // Maximum number of character inputs. Exceeding this will cause unintended behavior or crash.
+#define MAXINPUT 100 // Maximum number of character inputs
 #define HIDDENBOMB 9
 #define REVEALEDBOMB 10
 #define NOTREVEALED -1
@@ -374,4 +374,5 @@ int main() {
     freeHiddenBoard(valsBoard);
     return 0;
 }
+
 
