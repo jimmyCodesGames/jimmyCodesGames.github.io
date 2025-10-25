@@ -14,8 +14,8 @@
 #define ALLTILESREVEALED (BOARDSIZE * BOARDSIZE - NUMBOMBS) // Constant to keep track of number of tiles not containing a bomb
 #define MAXINPUT 100 // Maximum number of character inputs
 #define HIDDENBOMB 9 // Bomb is hidden. Will show as ' ' in VisibleBoard
-#define DETONATEDBOMB 10 // Bombs have detonated. Reveal all bombs as 'x'. Player lost
-#define EXPOSEDBOMB 11 // Player won! Expose undetonated bombs as 'O'.
+#define DETONATEDBOMB 10 // Bombs have detonated. Reveal all bombs as 'X'. Player lost
+#define EXPOSEDBOMB 11 // Player won! Expose undetonated bombs as '*'.
 #define NOTREVEALED -1 // Tile has not been revealed yet. Will show as ' ' in VisibleBoard
 #define ZERO 0 // Special case for Minesweeper. If numAdjacent bombs = 0, reveal adjacent
 
@@ -410,3 +410,4 @@ int main() {
     freeHiddenBoard(valsBoard);
     return 0;
 }
+
