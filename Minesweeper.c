@@ -365,9 +365,9 @@ int promptCoords(VisibleBoard * v, int * row, int * col) {
 int main() {
     srand(time(NULL)); // Ensure the game differs every time
 
-    HiddenBoard * valsBoard;
+    HiddenBoard * valsBoard = NULL;
     initializeHiddenBoard(&valsBoard);
-    VisibleBoard * display;
+    VisibleBoard * display = NULL;
     initializeVisibleBoard(&display);
     updateVisibleBoard(display, valsBoard);
 
