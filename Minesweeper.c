@@ -13,9 +13,10 @@
 #define NUMBOMBS (BOARDSIZE * BOARDSIZE / 8) // Spawns bombs proportional to BOARDSIZE. Ideal for 9 x 9 (10 bombs)
 #define ALLTILESREVEALED (BOARDSIZE * BOARDSIZE - NUMBOMBS) // Constant to keep track of number of tiles not containing a bomb
 #define MAXINPUT 100 // Maximum number of character inputs
-#define HIDDENBOMB 9
-#define REVEALEDBOMB 10
-#define NOTREVEALED -1
+#define HIDDENBOMB 9 // Bomb is hidden. Will show as ' ' in VisibleBoard
+#define DENONATEDBOMB 10 // Bombs have detonated. Reveal all bombs as 'x'. Player lost
+#define EXPOSEDBOMB 11 // Player won! Expose undetonated bombs as 'O'.
+#define NOTREVEALED -1 // Tile has not been revealed yet. Will show as ' ' in VisibleBoard
 #define ZERO 0 // Special case for Minesweeper. If numAdjacent bombs = 0, reveal adjacent
 
 
@@ -55,7 +56,7 @@ int pushCoords(CoordsNode * coords, CoordsNode * newCoord);
 void selectTile(HiddenBoard * b, int row, int col);
 void revealAdjacent(HiddenBoard * b, int r, int c);
 int numAdjacentBombs(HiddenBoard * b, int r, int c);
-void revealAllBombs(HiddenBoard * b);
+void revealAllBombs(HiddenBoard * b, int lost);
 
 void clearBoard(HiddenBoard * b);
 void resetGame(VisibleBoard * v, HiddenBoard * h);
@@ -174,7 +175,7 @@ void selectTile(HiddenBoard * b, int row, int col) {
 
     switch (b->board[row][col]) {
         case HIDDENBOMB: 
-            revealAllBombs(b); 
+            revealAllBombs(b, 1); // NOTE: 1 indicates lost is true
             break;
         case NOTREVEALED: 
             b->board[row][col] = numAdjacentBombs(b, row, col);
@@ -192,12 +193,10 @@ void selectTile(HiddenBoard * b, int row, int col) {
 
 // Works as a flood fill with pickTile() to recursively fill board so long as a 0 is revealed
 void revealAdjacent(HiddenBoard * b, int r, int c) {
-    for(int i = -1; i < 2; i++) {
-        for(int j = -1; j<2; j++) {
+    for(int i = -1; i < 2; i++) 
+        for(int j = -1; j < 2; j++) 
             if(!(i == 0 && j == 0))
                 selectTile(b, r + i, c + j);
-        }
-    }
 }
 
 
@@ -205,32 +204,28 @@ void revealAdjacent(HiddenBoard * b, int r, int c) {
 int numAdjacentBombs(HiddenBoard * b, int r, int c) {
     int numBombs = 0;
     for(int i = -1; i < 2; i++) 
-        for(int j = -1; j<2; j++)
-            if (r+i >= 0 && r+i < BOARDSIZE && c+j >= 0 && c+j < BOARDSIZE && !(i == 0 && j == 0)) 
-                if(b->board[r+i][c+j] == HIDDENBOMB)
+        for(int j = -1; j < 2; j++)
+            if (r + i >= 0 && r + i < BOARDSIZE && c + j >= 0 && c + j < BOARDSIZE && !(i == 0 && j == 0))
+                if(b->board[r + i][c + j] == HIDDENBOMB)
                     numBombs++;
     return numBombs;
 }
 
 
 // Changes HiddenBoard values to reveal the bomb locations in VisibleBoard.
-void revealAllBombs(HiddenBoard * b) {
-    for (int row = 0; row < BOARDSIZE; row++) {
-        for (int col = 0; col < BOARDSIZE; col++) {
+void revealAllBombs(HiddenBoard * b, int lost) {
+    for (int row = 0; row < BOARDSIZE; row++) 
+        for (int col = 0; col < BOARDSIZE; col++) 
             if (b->board[row][col] == HIDDENBOMB) 
-                b->board[row][col] = REVEALEDBOMB;
-        }
-    }
+                b->board[row][col] = (lost) ? DENONATEDBOMB : EXPOSEDBOMB;
 }
 
 
 // Reset HiddenBoard values to NOTREVEALED
 void clearBoard(HiddenBoard * b) {
-    for (int row = 0; row < BOARDSIZE; row++) {
-        for (int col = 0; col < BOARDSIZE; col++) {
+    for (int row = 0; row < BOARDSIZE; row++) 
+        for (int col = 0; col < BOARDSIZE; col++) 
             b->board[row][col] = NOTREVEALED;
-        }
-    }
 }
 
 
@@ -254,8 +249,12 @@ int updateVisibleBoard(VisibleBoard * v, HiddenBoard * h) {
                 case HIDDENBOMB:
                     v->board[row][col] = ' ';
                     break;
-                case REVEALEDBOMB:
-                    v->board[row][col] = 'x';
+                case DENONATEDBOMB:
+                    v->board[row][col] = 'X';
+                    lost = 1;
+                    break;
+                case EXPOSEDBOMB:
+                    v->board[row][col] = '*'; 
                     lost = 1;
                     break;
                 default:
@@ -269,29 +268,40 @@ int updateVisibleBoard(VisibleBoard * v, HiddenBoard * h) {
 
 // Prints formatted board with values from VisibleBoard
 void printBoard(VisibleBoard * v) {
-    printf("MINESWEEPER\n");
-    printf("-----------\n");
-    printf("   ||");
+    // Header
+    printf("MINESWEEPER\n-----------\n");
+
+    // Column #s
+    printf("   ||"); 
     for (int i = 0; i < BOARDSIZE; i++) 
         printf("%2d |", i+1);
     printf("\n---||");
-    for (int i = 0; i < BOARDSIZE-1; i++) 
+
+    // Divide Column #s and board
+    for (int i = 0; i < BOARDSIZE - 1; i++) 
             printf("====");
     printf("===|\n");
-    for (int row = 0; row < BOARDSIZE; row++) {
-        printf("%2d ||", row+1);
+
+    // Board
+    for (int row = 0; row < BOARDSIZE; row++) { 
+        // Row #s
+        printf("%2d ||", row + 1);
+
+        // Tiles from Visible board
         for (int col = 0; col < BOARDSIZE; col++) 
             printf(" %c |", v->board[row][col]);
         printf("\n");
-        if (row < BOARDSIZE-1) {
+
+        // Rows divider / bottom of board
+        if (row < BOARDSIZE-1) { 
             printf("---||");
-            for (int i = 0; i < BOARDSIZE-1; i++) 
+            for (int i = 0; i < BOARDSIZE - 1; i++) 
                     printf("---+");
             printf("---|\n");
         }
         else { 
             printf("-----");
-            for (int i = 0; i < BOARDSIZE-1; i++) 
+            for (int i = 0; i < BOARDSIZE - 1; i++) 
                     printf("----");
             printf("---|\n");
         }
@@ -303,7 +313,7 @@ void printBoard(VisibleBoard * v) {
 // If '0' is entered, return 1 to quit game. Otherwise reset game and return 0
 int promptRestart(HiddenBoard * h, VisibleBoard * v, int lost) {
 
-    revealAllBombs(h);
+    revealAllBombs(h, lost);
     updateVisibleBoard(v, h);
     printBoard(v);
     printf("YOU %s!!!\n\n", lost ? "LOST" : "WON");
@@ -389,8 +399,7 @@ int main() {
         selectTile(valsBoard, row, col);
         lost = updateVisibleBoard(display, valsBoard);
 
-        if (lost || valsBoard->tilesRevealed == ALLTILESREVEALED) // Executes if player won or lost is true
-        {
+        if (lost || valsBoard->tilesRevealed == ALLTILESREVEALED) { // Executes if player won or lost is true
             quit = promptRestart(valsBoard, display, lost);
             if(quit) break;
         }
@@ -402,3 +411,5 @@ int main() {
     freeHiddenBoard(valsBoard);
     return 0;
 }
+
+
