@@ -14,7 +14,7 @@
 #define ALLTILESREVEALED (BOARDSIZE * BOARDSIZE - NUMBOMBS) // Constant to keep track of number of tiles not containing a bomb
 #define MAXINPUT 100 // Maximum number of character inputs
 #define HIDDENBOMB 9 // Bomb is hidden. Will show as ' ' in VisibleBoard
-#define DENONATEDBOMB 10 // Bombs have detonated. Reveal all bombs as 'x'. Player lost
+#define DETONATEDBOMB 10 // Bombs have detonated. Reveal all bombs as 'x'. Player lost
 #define EXPOSEDBOMB 11 // Player won! Expose undetonated bombs as 'O'.
 #define NOTREVEALED -1 // Tile has not been revealed yet. Will show as ' ' in VisibleBoard
 #define ZERO 0 // Special case for Minesweeper. If numAdjacent bombs = 0, reveal adjacent
@@ -151,7 +151,7 @@ void addBombs(HiddenBoard * b) {
 }
 
 
-// Attempt to add new CoordsNord. Free new CoordsNode and return 0 if coord already exists. Otherwise, add and return 1;
+// Attempt to add new CoordsNode. Free new CoordsNode and return 0 if coord already exists. Otherwise, add and return 1;
 int pushCoords(CoordsNode * coords, CoordsNode * newCoord) {
     CoordsNode * walker = coords;
     while (walker) {
@@ -171,7 +171,7 @@ int pushCoords(CoordsNode * coords, CoordsNode * newCoord) {
 // Checks HiddenBoard[row][col]. Update board. If value is 0 after revealing, call revealAdjacent.
 void selectTile(HiddenBoard * b, int row, int col) {
     if (!(row >= 0 && row < BOARDSIZE && col >= 0 && col < BOARDSIZE) || b->board[row][col] == ZERO) 
-        return; // Break resursion if out of bounds or already ZERO
+        return; // Break recursion if out of bounds or already ZERO
 
     switch (b->board[row][col]) {
         case HIDDENBOMB: 
@@ -217,7 +217,7 @@ void revealAllBombs(HiddenBoard * b, int lost) {
     for (int row = 0; row < BOARDSIZE; row++) 
         for (int col = 0; col < BOARDSIZE; col++) 
             if (b->board[row][col] == HIDDENBOMB) 
-                b->board[row][col] = (lost) ? DENONATEDBOMB : EXPOSEDBOMB;
+                b->board[row][col] = (lost) ? DETONATEDBOMB : EXPOSEDBOMB;
 }
 
 
@@ -249,13 +249,12 @@ int updateVisibleBoard(VisibleBoard * v, HiddenBoard * h) {
                 case HIDDENBOMB:
                     v->board[row][col] = ' ';
                     break;
-                case DENONATEDBOMB:
+                case DETONATEDBOMB:
                     v->board[row][col] = 'X';
                     lost = 1;
                     break;
                 case EXPOSEDBOMB:
                     v->board[row][col] = '*'; 
-                    lost = 1;
                     break;
                 default:
                     v->board[row][col] = '0' + h->board[row][col];
@@ -411,5 +410,3 @@ int main() {
     freeHiddenBoard(valsBoard);
     return 0;
 }
-
-
